@@ -1,23 +1,22 @@
 import streamlit as st
+from langchain_classic.retrievers.multi_vector import SearchType
 from langchain_classic.retrievers import ParentDocumentRetriever
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from auditFinding import AuditFinding
 
-def run_audit_check(question, vectorstore, store, policy_filenames):
-    all_docs = []
+def run_audit_check(question, vectorstore, store):
     parent_splitter = RecursiveCharacterTextSplitter(chunk_size=2000)
     child_splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=150)
 
-    for filename in policy_filenames:
-        doc_retriever = ParentDocumentRetriever(
-            vectorstore=vectorstore,
-            docstore=store,
-            search_type="mmr",
-            search_kwargs={"k": 10, "filter": {"source": filename}, "fetch_k": 30},
-            child_splitter = child_splitter,
-            parent_splitter = parent_splitter,
-        )
-        all_docs.extend(doc_retriever.invoke(question))
+    doc_retriever = ParentDocumentRetriever(
+        vectorstore=vectorstore,
+        docstore=store,
+        search_type=SearchType.mmr,
+        search_kwargs={"k": 100, "fetch_k": 300, "lambda_mult": 0.2},
+        child_splitter=child_splitter,
+        parent_splitter=parent_splitter,
+    )
+    all_docs = doc_retriever.invoke(question)
 
     if "reranker" in st.session_state and all_docs:
         docs = st.session_state.reranker.compress_documents(all_docs, question)

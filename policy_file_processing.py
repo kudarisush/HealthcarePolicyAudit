@@ -56,7 +56,7 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
         child_splitter=child_splitter,
         parent_splitter=parent_splitter,
         search_type=SearchType.mmr,
-        search_kwargs = {"k": 100, "lambda_mult": 0.15, "fetch_k": 500}
+        search_kwargs = {"k": 100, "lambda_mult": 0.25, "fetch_k": 200}
     )
 
     st.session_state.store = local_store
@@ -84,7 +84,7 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
                         doc.metadata["page"] = page_num
 
                         breadcrumb = f"SECTION: {uploaded_file.name} | Page {page_num}\n"
-                        # doc.page_content = breadcrumb + doc.page_content
+                        doc.page_content = breadcrumb + doc.page_content
 
                     all_docs.extend(loaded_docs)
                     os.remove(tmp_path)
