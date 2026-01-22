@@ -27,6 +27,16 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
     if not (policy_pdfs and api_key):
         return
 
+    if st.session_state.llm is None:
+        st.session_state.llm = ChatGoogleGenerativeAI(
+            model="gemini-flash-latest",
+            google_api_key=api_key
+        )
+
+    if "reranker" not in st.session_state:
+        flashrank_client = Ranker(model_name="ms-marco-MultiBERT-L-12", cache_dir=FLASH_CACHE_DIR)
+        st.session_state.reranker = FlashrankRerank(client=flashrank_client, top_n=10)
+
     if not os.path.exists(PARENT_STORE_DIR):
         os.makedirs(PARENT_STORE_DIR)
 
@@ -93,11 +103,6 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
                 st.write(files_processed)
             else:
                 status.update(label="Loaded DB", state="complete")
-
-            st.session_state.llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", google_api_key=api_key)
-
-            flashrank_client = Ranker(model_name="ms-marco-MultiBERT-L-12", cache_dir=FLASH_CACHE_DIR)
-            st.session_state.reranker = FlashrankRerank(client=flashrank_client, top_n=10)
 
             st.session_state.qa_chain = RetrievalQA.from_chain_type(
                 llm=st.session_state.llm,

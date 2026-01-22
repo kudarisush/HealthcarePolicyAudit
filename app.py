@@ -48,6 +48,8 @@ if st.session_state.qa_chain or db_exists:
     if audit_pdf:
         raw_audit_text = load_raw_questions(audit_pdf)
         if st.button("Analyze Questions"):
+            if st.session_state.llm is None:
+                st.error("Audit Engine not ready")
             questions = extract_questions_to_list(raw_audit_text, st.session_state.llm)
             if questions:
                 final_report,total_conf = generate_audit_report(questions, policy_filenames)
