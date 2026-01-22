@@ -14,11 +14,13 @@ import os
 st.set_page_config(page_title="Compliance Auditor", layout="wide")
 st.title("Healthcare Regulatory Audit Tool")
 
+db_exists = os.path.exists("./audit_db_storage") and os.path.exists("./parent_doc_store")
+
 with st.sidebar:
     st.header("Setup")
     load_dotenv()
-    api_key = os.getenv("GOOGLE_API_KEY")
-    # api_key = st.text_input("Enter Google API Key", type="password")
+    # api_key = os.getenv("GOOGLE_API_KEY")
+    api_key = st.text_input("Enter Google API Key", type="password")
 
     policy_pdfs = st.file_uploader(
         "Upload Policy Manuals",
@@ -35,7 +37,10 @@ if "vectorstore" not in st.session_state:
 
 policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT)
 
-if st.session_state.qa_chain:
+if st.session_state.qa_chain or db_exists:
+    if st.session_state.qa_chain is None:
+        policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT)
+
     st.header("Upload Requirements")
     audit_pdf = st.file_uploader("Upload the list of Audit Questions (PDF)", type="pdf")
     policy_filenames = [f.name for f in policy_pdfs]
