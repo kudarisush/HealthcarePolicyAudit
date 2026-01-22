@@ -12,7 +12,6 @@ def generate_audit_report(questions, policy_filenames):
                 q,
                 st.session_state.vectorstore,
                 st.session_state.store,
-                policy_filenames
             )
             total_conf += finding.confidence
             st.write({
