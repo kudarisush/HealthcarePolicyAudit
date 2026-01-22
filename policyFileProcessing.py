@@ -31,7 +31,8 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
     # embedding language model
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/embedding-001",
-        task_type="retrieval_document"
+        task_type="retrieval_document",
+        google_api_key = api_key
     )
 
     # vector database
