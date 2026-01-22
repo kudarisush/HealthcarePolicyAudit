@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+.idea/
+
+audit_db_storage/
+parent_doc_store/
+
+flashrank_cache/
+
+Public\ Policies/
+
+.DS_Store
+.DS_Store?
+._*
+__MACOSX/
+
+venv/
+.env
+env/
