@@ -37,14 +37,14 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
     embeddings = GoogleGenerativeAIEmbeddings(
         model="models/embedding-001",
         task_type="retrieval_document",
-        google_api_key = api_key
+        google_api_key = api_key,
     )
 
     # vector database
     vectorstore = Chroma(
         collection_name="split_parents",
         embedding_function=embeddings,
-        persist_directory=PERSIST_DIR
+        persist_directory=PERSIST_DIR,
     )
 
     parent_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200, add_start_index=True)
@@ -56,7 +56,7 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
         child_splitter=child_splitter,
         parent_splitter=parent_splitter,
         search_type=SearchType.mmr,
-        search_kwargs = {"k": 100, "lambda_mult": 0.25, "fetch_k": 200}
+        search_kwargs = {"k": 100, "lambda_mult": 0.15, "fetch_k": 500}
     )
 
     st.session_state.store = local_store
@@ -84,7 +84,7 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
                         doc.metadata["page"] = page_num
 
                         breadcrumb = f"SECTION: {uploaded_file.name} | Page {page_num}\n"
-                        doc.page_content = breadcrumb + doc.page_content
+                        # doc.page_content = breadcrumb + doc.page_content
 
                     all_docs.extend(loaded_docs)
                     os.remove(tmp_path)

@@ -31,11 +31,13 @@ def run_audit_check(question, vectorstore, store, policy_filenames):
 
 
     unique_citations = []
+    source_counts = {}
     seen = set()
     for d in docs:
         file_name = d.metadata.get('source', 'Unknown').split('/')[-1]
+        source_counts[file_name] = source_counts.get(file_name, 0) + 1
         page_num = d.metadata.get('page', 0)
-        if (file_name, page_num) not in seen:
+        if (file_name, page_num) not in seen and source_counts[file_name] <= 3:
             unique_citations.append({"file_name": file_name, "page": page_num})
             seen.add((file_name, page_num))
 
