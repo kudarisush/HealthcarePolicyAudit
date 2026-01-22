@@ -14,9 +14,11 @@ from flashrank import Ranker
 from batch_add_document import batch_add_documents
 
 PERSIST_DIR = "./audit_db_storage"
-FLASH_CACHE_DIR = "./flashrank_cache"
+FLASH_CACHE_DIR = os.path.join(os.getcwd(), "flashrank_cache")
 PARENT_STORE_DIR = "./parent_doc_store"
 
+if not os.path.exists(FLASH_CACHE_DIR):
+    os.makedirs(FLASH_CACHE_DIR)
 
 def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
     if not (policy_pdfs and api_key):
