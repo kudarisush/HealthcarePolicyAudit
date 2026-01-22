@@ -6,7 +6,7 @@ from qa_chain_prompt import QA_CHAIN_PROMPT
 from footer_data import footer_data
 from generate_audit_report import generate_audit_report
 from load_raw_questions import load_raw_questions
-from policyFileProcessing import policy_file_processing
+from policy_file_processing import policy_file_processing
 from utils import extract_questions_to_list
 from dotenv import load_dotenv
 import os

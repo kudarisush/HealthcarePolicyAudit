@@ -13,9 +13,10 @@ from langchain_classic.retrievers.document_compressors import FlashrankRerank
 from flashrank import Ranker
 from batch_add_document import batch_add_documents
 
-PERSIST_DIR = "./audit_db_storage"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PERSIST_DIR = os.path.join(BASE_DIR, "audit_db_storage")
 FLASH_CACHE_DIR = os.path.join(os.getcwd(), "flashrank_cache")
-PARENT_STORE_DIR = "./parent_doc_store"
+PARENT_STORE_DIR = os.path.join(BASE_DIR, "parent_doc_store")
 
 if not os.path.exists(FLASH_CACHE_DIR):
     os.makedirs(FLASH_CACHE_DIR)
