@@ -3,7 +3,7 @@ import streamlit as st
 import re
 from collections import Counter
 
-def batch_add_documents(retriever, docs, batch_size=10):  # Slightly larger batch for efficiency
+def batch_add_documents(retriever, docs, batch_size=10):
     if not docs:
         st.warning("No documents to ingest.")
         return
@@ -42,7 +42,7 @@ def batch_add_documents(retriever, docs, batch_size=10):  # Slightly larger batc
                     retries += 1
                     st.warning(f"Database locked. Retrying batch {i // batch_size}... ({retries}/5)")
                     time.sleep(5 * retries)
-                    # Handle Gemini/Google Rate Limits
+
                 elif "429" in error_msg:
                     retries += 1
                     wait_match = re.search(r"retry in (\d+\.?\d*)s", error_msg)

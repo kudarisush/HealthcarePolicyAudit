@@ -16,7 +16,7 @@ def extract_questions_to_list(raw_text, llm):
     OUTPUT FORMAT:
     {{"requirements": ["Requirement 1", "Requirement 2"]}}
     """
-
+    content = ""
     try:
         response = llm.invoke(prompt)
         content = response.content

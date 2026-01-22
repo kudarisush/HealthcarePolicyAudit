@@ -2,7 +2,9 @@ import streamlit as st
 import os
 import tempfile
 import shutil
+import random
 from langchain_classic.retrievers import ParentDocumentRetriever
+from langchain_classic.retrievers.multi_vector import SearchType
 from langchain_classic.storage import LocalFileStore, create_kv_docstore
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -45,15 +47,20 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
         persist_directory=PERSIST_DIR
     )
 
+    parent_splitter = RecursiveCharacterTextSplitter(chunk_size=2000, chunk_overlap=200, add_start_index=True)
     child_splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=150)
 
     retriever = ParentDocumentRetriever(
         vectorstore=vectorstore,
         docstore=local_store,
-        child_splitter=child_splitter
+        child_splitter=child_splitter,
+        parent_splitter=parent_splitter,
+        search_type=SearchType.mmr,
+        search_kwargs = {"k": 100, "lambda_mult": 0.25, "fetch_k": 200}
     )
 
     st.session_state.store = local_store
+    random.shuffle(policy_pdfs)
 
     if st.session_state.qa_chain is None:
         with st.status("Audit Engine: Checking Database...") as status:
@@ -90,7 +97,7 @@ def policy_file_processing(policy_pdfs, api_key, QA_CHAIN_PROMPT):
             st.session_state.llm = ChatGoogleGenerativeAI(model="gemini-flash-latest", google_api_key=api_key)
 
             flashrank_client = Ranker(model_name="ms-marco-MultiBERT-L-12", cache_dir=FLASH_CACHE_DIR)
-            st.session_state.reranker = FlashrankRerank(client=flashrank_client)
+            st.session_state.reranker = FlashrankRerank(client=flashrank_client, top_n=10)
 
             st.session_state.qa_chain = RetrievalQA.from_chain_type(
                 llm=st.session_state.llm,

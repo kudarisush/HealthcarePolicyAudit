@@ -1,13 +1,13 @@
+import time
 import streamlit as st
-
 from run_audit_check import run_audit_check
-
 
 def generate_audit_report(questions, policy_filenames):
     final_report = []
     total_conf = 0
     for i, q in enumerate(questions):
         with st.status(f"Checking Requirement {i + 1}: {q}"):
+            time.sleep(2.0)
             finding = run_audit_check(
                 q,
                 st.session_state.vectorstore,

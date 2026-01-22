@@ -23,7 +23,7 @@ with st.sidebar:
     api_key = st.text_input("Enter Google API Key", type="password")
 
     policy_pdfs = st.file_uploader(
-        "Upload Policy Manuals",
+        "Upload Policy Manuals -- NOT AUDIT QUESTIONS",
         type="pdf",
         accept_multiple_files=True
     )
